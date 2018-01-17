@@ -1,0 +1,16 @@
+Given a judgement J, an inversion principle lets us recover possible premises
+J₁...Jₙ, so that J can be derived from J₁...Jₙ. Inversion principles are
+usually stated in terms of rules or derivations.
+
+The fundamental datatype of proof assistants however is not a derivation but a
+typed term together with its context, i.e. a judgement. In calculi with
+decidable type checking this is equivalent to giving a derivation, but in the
+context of extensional type theory, we can not reconstruct derivations from
+judgements. The inversion principles we are after must therefore work on
+judgements.
+
+We present a reformulation of extensional type theory geared towards
+implementation, where the judgements are enriched with enough information to
+reconstruct sufficient parts of the derivation to invert judgements.
+
+This development is wip and jww Andrej Bauer.

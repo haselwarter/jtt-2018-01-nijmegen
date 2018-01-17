@@ -1,0 +1,178 @@
+\documentclass[14pt]{beamer}
+\usepackage{amsmath,amssymb,amsthm,mathtools,unicode-math}
+
+\usepackage{mathpartir}
+% \usepackage{xcolor}
+% \usepackage[colorlinks,linkcolor={blue!50!black},citecolor={green!50!black},urlcolor={red!80!black},
+% xetex]{hyperref}
+
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{lem}[thm]{Lemma}
+
+% General macros
+\input{macros.tex}
+
+% Definitions of all rules
+\input{rules.tex}
+
+% \usepackage{rotating}
+
+
+% % \usepackage{color}
+% % \usepackage{booktabs}
+% \usepackage{mathpartir}
+
+
+\title{Inversion rules in extensional type theory}
+\author{
+  Andrej Bauer %\inst{1}
+  \and
+  \emph{Philipp G. Haselwarter} %\inst{1},
+}
+
+% \institute{University of Ljubljana, Slovenia
+% \and
+% \'Ecole Normale Supérieure Lyon, France
+% \and
+% Harvey Mudd College, USA
+% }
+
+\date{\small
+  EUTypes Nijmegen 2018\\
+  % University of Novi Sad\\
+  % May 2016
+}
+
+% Comment out the following line to avoid overlayed items
+% in itemize.
+% \beamerdefaultoverlayspecification{<+->}
+
+\mode<presentation>
+\usecolortheme{rose}
+\usefonttheme{serif}
+\setbeamertemplate{navigation symbols}{}
+
+% Frame number
+\setbeamertemplate{footline}[frame number]{}
+
+\begin{document}
+\begin{frame}
+  \titlepage
+
+  % This is joint work with Andrej Bauer.
+
+\end{frame}
+
+\begin{frame}{Inversion principles}
+
+  For a judgement \quad $\ett {\infer{}{\isterm Γ {(\lam x A B t)} C}} $ \quad
+  does there exist a derivation of a particular shape?
+  %
+  \begin{mathpar}\ett{
+      \infer
+      {
+        {\infer
+          {\infer
+            {\mathcal D_1}
+            {\isterm {\ctxext Γ x A} s B}}
+          {\isterm Γ {(\lam x A B s)} {\Prod x A B}}}
+        \and
+        {\infer
+          {\mathcal D_2}
+          {\eqtype Γ {\Prod x A B} C}}
+      }
+      {\isterm Γ {(\lam x A B s)} C}
+    }
+  \end{mathpar}
+
+  \pause
+  Answer: Yes!
+  \pause
+  Also for ETT.
+
+  % TODO: sketch proof argument
+
+\end{frame}
+
+\begin{frame}{Strengthening}
+  % want "good" inversion principles
+  % TODO: find example where strengthening after inversion is necessary.
+  % eg. auto works for propositional fragment
+
+  If
+  \begin{ett}
+    $\isterm {\ctxext Γ x A} s B$ derivable and $x \notin {\text{\emph{{FreeVar}}}}(s,B)$, then
+    $\isterm Γ s B$ ?
+  \end{ett}
+
+  \medskip
+
+  \pause
+  Answer: ITT: yes, ETT: no. Example:
+
+  \begin{ett} $$
+    \isterm {
+      \begin{array}{l l l}
+        P & : & \SimProd A U\\
+        {x\ y} & : & A \\
+        z & : & {P\, x} \\
+        h & : & {\eq A x y}
+      \end{array}}
+    z {P\, y}
+    $$
+  \end{ett}
+
+
+  Ex.: normalisation under $λ$: Prove $λx. (λy.y) x ≡ λx.x$ by congr. \& $β$.
+  %
+  Congr. = deconstruct jdg.
+  %
+  w/o strengthening, subterms % (really rather: their judgements)
+  get ``poisoned'': bound variables proliferate, prevent re-assembly of the
+  normalised subterms.
+  % TODO: find a construction that actually relies on strengthening & fails w/o it
+  % try to remove strengthening in Andromeda, see what fails!
+
+\end{frame}
+
+\begin{frame}{Recovering strengthening}
+  annotate judgements. annotate subterms.
+
+  just collection, conversion adds stuff.
+\end{frame}
+
+\begin{frame}{Consistent contexts}
+
+  For forward reasoning we need to \emph{combine} judgements.
+  \pause
+
+  $$\showjttTermApp$$
+
+  \begin{itemize}
+  \item at least structural: $\ctxle \ctxempty Γ$ and $\jtt \ctxle Γ ({\ctxext Γ x A })$
+  \item at most semantic: if $\ctxle Δ Γ $ and $\jtt \isjdg Δ {\mathcal J}$ then
+    $\jtt \isjdg Γ  {\mathcal J}$
+  \end{itemize}
+  % refl, trans
+
+  The relation ${\ctxcst {Γ₁, Γ₂} Γ}$ generalises subcontexts.
+
+  \begin{itemize}
+  \item could be functional
+  \item has to be compatible with context restriction (cf. assumptions)
+\end{itemize}
+\end{frame}
+
+
+% skip this or only briefly
+\begin{frame}{Axioms for consistent- and sub-contexts}
+  \begin{align*}
+    \ctxcst{Γ₁, …, Γ_n} Γ &\implies \all{j ≤ n} Γ_j ≤ Γ \\
+    (\all{j ≤ n} Γ_j ≤ Γ) &\implies \some{Γ' ≤ Γ} \ctxcst{Γ₁, …, Γ_n}{Γ'}
+  \end{align*}
+\end{frame}
+
+
+
+
+\end{document}

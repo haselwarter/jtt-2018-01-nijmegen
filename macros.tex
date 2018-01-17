@@ -1,0 +1,167 @@
+% Please describe macros se we know what they are
+
+% Rule names, refs etc.
+\newcommand{\ettrn}[1]{\text{\textsc{#1}}} % ETT rule name
+\newcommand{\jttrn}[1]{\text{\textsc{#1}$_J$}} % JTT rule name
+\newcommand{\attrn}[1]{\text{\textsc{#1}$_A$}} % JTT rule name
+\newcommand{\ruleref}[2]{\ref{#2}}
+
+\newcommand{\latag}[1]{\label{eq:#1}\tag{#1}}
+
+% Magic that switches between ETT and JTT
+\newcommand{\entails}{\JTTORETTNOTSET} % there shouldn't be a default
+\newcommand{\letett}{\def\entails{\vdash}\def\isctx{\ettisctx}}
+\newcommand{\letjtt}{\def\entails{\vdash_{\!J}}\def\isctx{\jttisctx}}
+\newcommand{\letatt}{
+  \def\entails{\vdash} % _{\!A}
+  % \def\isjdg\attisjdg
+  % \def\isctx\attisctx
+  % \def\istype\attistype
+  % \def\eqtype\atteqtype
+  % \def\isterm\attisterm
+  % \def\eqterm\atteqterm
+}
+
+% These should never be used at toplevel. Maybe there's a way to make latex
+% fail when it's not in an environment? Or when it's not in math mode?
+\newenvironment{ett} {\letett{}}{}
+\newenvironment{jtt} {\letjtt{}}{}
+\newenvironment{att} {\letatt{}}{}
+
+
+% Quantifiers
+\newcommand{\all}[1]{\forall #1\,,\;}
+\newcommand{\some}[1]{\exists #1\,,\;}
+
+\newcommand{\defeq}{\mathrel{:=}}
+
+\newcommand{\ctxdom}[1]{\mathrm{dom}(#1)}
+\newcommand{\fresh}[2]{#1 \notin \ctxdom #2}
+
+%% Syntax
+\newcommand{\bnf}{\ \mathrel{{:}{:}{=}}\ }
+\newcommand{\bnfor}{\ \mid\ \ }
+
+%% Syntactic constructs
+\newcommand{\ctxempty}{\bullet} % empty context
+\newcommand{\ctxentry}[2]{#1\, {:}\, #2}
+\newcommand{\ctxext}[3]{#1,\, \ctxentry{#2}{#3}} % extended context
+\newcommand{\attctxext}[4]{#1,\, #2\, {:}\, {#4}^{#3}} % extended context
+
+\newcommand{\subst}[3]{#1[#2/#3]} % substitution
+\newcommand{\substs}[2]{#1[#2]} % substitution of many variables
+
+\newcommand{\Prod}[2]{\mathop{\textstyle\prod_{(#1 {:} #2)}}}
+\newcommand{\SimProd}[1]{#1 \rightarrow}
+\newcommand{\attProd}[5]{\mathop{\textstyle\prod_{(#1 {:} #3^#2)}} {#5^#4}}
+
+\newcommand{\lam}[3]{\lambda {#1} {:} {#2}.{#3}\,.\,} % $\lambda$-abstraction
+\newcommand{\app}[5]{#1\mathbin{@^{#2{:}#3.#4}} #5} % application
+
+\newcommand{\abst}[2]{[#1 \,.\, #2]} % abstraction
+\newcommand{\ascribe}[2]{#1 \,{:}{:}\, #2} % type ascription
+
+\newcommand{\eq}[3]{\mathsf{Eq}_{#1}(#2,#3)} % Equality type
+\newcommand{\refl}[1]{{\mathsf{refl}_{#1}}\,}    % Judgmental refl
+
+% %%% Kinds and signatures
+
+\newcommand{\Univ}{\mathsf{U}} % base type (universe)
+\newcommand{\El}[1]{\mathsf{El}\,#1} % base type (universe)
+\newcommand{\attEl}[2]{\mathsf{El}\,(#1,#2)} % base type (universe)
+
+
+% \newcommand{\sigempty}{\circ} % empty signature
+% \newcommand{\sigext}[3]{#1,\, #2\, {:}\, #3} % extend signature with a constant
+% \newcommand{\sigExt}[3]{#1,\, #2\, {:}{:}\, #3} % extend signature with a type family
+
+\newcommand{\KProd}[2]{\mathop{\textstyle\prod_{(#1 {:} #2)}}} % indexed kinds
+
+
+% orthodox judgments
+\newcommand{\isjdg}[2]{#1 \entails #2}
+\newcommand{\ettisctx}[1]{#1 \entails \mathsf{ctx}}
+\newcommand{\jttisctx}[1]{#1 \entails \mathsf{ctx}}
+
+\newcommand{\istype}[2]{#1 \entails #2 \kern .5em \mathsf{type}}
+\newcommand{\eqtype}[3]{#1 \entails #2 \equiv #3}
+\newcommand{\isterm}[3]{#1 \entails #2 : #3}
+\newcommand{\eqterm}[4]{#1 \entails #2 ~ \equiv ~ #3 : #4}
+
+\newcommand{\attisctx}[1]{#1 \entails \mathsf{ctx}}
+\newcommand{\attisjdg}[3]{#1 \entails^{\!#2} #3}
+\newcommand{\attistype}[3]{#1 \entails^{\!#2} #3 \kern .5em \mathsf{type}}
+\newcommand{\atteqtype}[6]{#1 \entails^{\!#2} (#3,#4) \equiv (#5,#6)}
+\newcommand{\attisterm}[4]{#1 \entails^{\!#2} #3 : #4}
+\newcommand{\atteqterm}[7]{#1 \entails^{\!#2} (#3, #4) ~ \equiv ~ (#5, #6) : #7} % equal terms
+
+
+\newcommand{\Nat}{\mathsf{Nat}} % the type of natural numbers
+\newcommand{\Bool}{\mathsf{Bool}} % the type of booleans
+
+% side-conditions
+\newcommand{\ctxcst}[2]{\{#1\}↑#2}
+\newcommand{\ctxle}[2]{#1 ≤ #2}
+\newcommand{\absvar}[4]{#1 \backslash (#2 {:} #3) \,{\sim}\, #4}
+\newcommand{\attabsvar}[5]{#1 \backslash (#2 {:} {#4^#3}) \,{\sim}\, #5}
+\newcommand{\ctxprj}[3]{\mathrm{Var}(#1,#2,#3)}
+\newcommand{\ctxres}[2]{{#1}_{| #2}}
+
+% assumption sets
+\newcommand{\asetempty}{\emptyset}
+\newcommand{\asetle}[2]{#1 ≼ #2}
+\newcommand{\asetcst}[2]{\asetle {\{#1\}} #2}
+\newcommand{\asetbnd}[2]{\asetle {#1} {\ctxdom {#2}}}
+\newcommand{\asetminus}[2]{#1 \backslash \{#2\}}
+\newcommand{\annot}[2]{\bare{#1}^{#2}}
+
+\newcommand{\bare}[1]{\underline{#1}}
+
+% AML constructs
+
+\newcommand{\ctxrestrict}[2]{#1{\restriction}_{#2}}
+\newcommand{\ctxjoin}[2]{#1 \bowtie #2}
+
+% natural type
+\newcommand{\naturalTy}[1]{\mathcal{N}(#1)}
+
+% The datatype of judgments
+\newcommand{\judgTy}{\mathtt{judgment}}
+
+\newcommand{\cType}{\mathtt{Type}}
+\newcommand{\cProd}[3]{\Pi (#1 {:} #2),\, #3} % can we have ttfont Pi?
+\newcommand{\capp}[2]{#1 \, #2}
+\newcommand{\clam}[2]{\lambda (#1 {:} #2),\,} % can we have ttfont lambda?
+\newcommand{\cEq}[2]{#1 \equiv #2} % can we have ttfont \equiv?
+\newcommand{\crefl}[1]{\mathtt{refl}\,#1}
+\newcommand{\cassume}[2]{\mathtt{assume}\;#1\,{:}\,#2\;\mathtt{in}\;}
+\newcommand{\csubst}[3]{#1\,\mathtt{where}\,#2 = #3}
+\newcommand{\cascribe}[2]{#1:#2}
+\newcommand{\cnatural}[1]{\mathtt{natural}\,#1}
+
+\newcommand{\chypotheses}{\mathtt{hypotheses}}
+\newcommand{\ccontext}[1]{\mathtt{context}\,#1}
+\newcommand{\cdynamic}[2]{\mathtt{dynamic}\;#1\;\mathtt{in}\;#2}
+\newcommand{\cnow}[2]{\mathtt{now}\;#1 = #2\;\mathtt{in}\;}
+\newcommand{\coccurs}[2]{\mathtt{occurs}\,#1\,#2}
+\newcommand{\cyield}[1]{\mathtt{yield}\,#1}
+
+\newcommand{\jpatt}[2]{\entails #1 : #2}
+\newcommand{\pvar}[1]{\mathtt{?}#1}
+\newcommand{\patom}[1]{\text{\lstinline{_atom}}\;#1}
+\newcommand{\pconst}[1]{\text{\lstinline{_constant}}\;#1}
+\newcommand{\opEqual}[2]{\mathtt{equal}\,#1\,#2}
+\newcommand{\opAsProd}[1]{\mathtt{as{\char95}prod}\,#1}
+\newcommand{\opAsEq}[1]{\mathtt{as{\char95}eq}\,#1}
+\newcommand{\opCoerce}[2]{\mathtt{coerce}\,#1\,#2}
+\newcommand{\opCoerceFun}[1]{\mathtt{coerce{\char95}fun}\,#1}
+
+% highlight todo items
+\newcommand\todo[1]{\textcolor{red}{#1}}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-engine: xetex
+%%% TeX-master: "jtt"
+%%% End:

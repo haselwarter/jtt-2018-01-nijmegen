@@ -1,0 +1,697 @@
+%% Macros defining rules
+
+%% ETT
+
+\newcommand{\showettCtxEmpty}{\ett
+  \infer
+  { }
+  {\isctx \ctxempty}}
+\newcommand{\ettCtxEmpty}{\ruleref{\ettrn{CtxEmpty}}{rule:ettCtxEmpty}}
+
+\newcommand{\showettCtxExtend}{\ett
+  \infer
+  {\istype Γ A \\
+   \fresh x Γ}
+  {\isctx {(\ctxext Γ x A)}}}
+\newcommand{\ettCtxExtend}{\ruleref{\ettrn{CtxExtend}}{rule:ettCtxExtend}}
+
+\newcommand{\showettTermTyConv}{\ett
+  \infer
+  {\isterm Γ t A \\
+   \eqtype Γ A B}
+  {\isterm Γ t B}}
+\newcommand{\ettTermTyConv}{\ruleref{\ettrn{TermTyConv}}{rule:ettTermTyConv}}
+
+\newcommand{\showettTermVar}{\ett
+  \infer
+  {x ∈ \ctxdom Γ \\ Γ(x) = A}
+  {\isterm Γ x A}}
+\newcommand{\ettTermVar}{\ruleref{\ettrn{TermVar}}{rule:ettTermVar}}
+
+\newcommand{\showettTyUniv}{\ett
+  \infer
+  {\isctx Γ}
+  {\istype Γ \Univ}}
+\newcommand{\ettTyUniv}{\ruleref{\ettrn{TyUniv}}{rule:ettTyUniv}}
+
+\newcommand{\showettTyEl}{\ett
+  \infer
+  {\isterm Γ s \Univ}
+  {\istype Γ {\El s}}}
+\newcommand{\ettTyEl}{\ruleref{\ettrn{TyEl}}{rule:ettTyEl}}
+
+\newcommand{\showettTyProd}{\ett
+  \infer
+  {\istype{\ctxext Γ x A} B}
+  {\istype Γ {\Prod x A B}}}
+\newcommand{\ettTyProd}{\ruleref{\ettrn{TyProd}}{rule:ettTyProd}}
+
+\newcommand{\showettTermAbs}{\ett
+  \infer
+  {\isterm{\ctxext Γ x A} t B}
+  {\isterm Γ {(\lam x A B t)}{\Prod x A B}}}
+\newcommand{\ettTermAbs}{\ruleref{\ettrn{TermAbs}}{rule:ettTermAbs}}
+
+\newcommand{\showettTermApp}{\ett
+  \infer
+  {\isterm Γ s {\Prod x A B} \\
+    \isterm Γ t A}
+  {\isterm Γ {\app s x A B t}{\subst B x t}}}
+\newcommand{\ettTermApp}{\ruleref{\ettrn{TermApp}}{rule:ettTermApp}}
+
+\newcommand{\showettTyEq}{\ett
+  \infer
+  {\isterm Γ s A \\
+    \isterm Γ t A}
+  {\istype Γ {\eq A s t}}}
+\newcommand{\ettTyEq}{\ruleref{\ettrn{TyEq}}{rule:ettTyEq}}
+
+\newcommand{\showettTermRefl}{\ett
+  \infer
+  {\isterm Γ t A}
+  {\isterm Γ {\refl A t}{\eq A t t}}}
+\newcommand{\ettTermRefl}{\ruleref{\ettrn{TermRefl}}{rule:ettTermRefl}}
+
+\newcommand{\showettEqRefl}{\ett
+  \infer
+  {\isterm Γ t A}
+  {\eqterm Γ t t A}}
+\newcommand{\ettEqRefl}{\ruleref{\ettrn{EqRefl}}{rule:ettEqRefl}}
+
+\newcommand{\showettEqSym}{\ett
+  \infer
+  {\eqterm Γ t s A}
+  {\eqterm Γ s t A}}
+\newcommand{\ettEqSym}{\ruleref{\ettrn{EqSym}}{rule:ettEqSym}}
+
+\newcommand{\showettEqTrans}{\ett
+  \infer
+  {\eqterm Γ s t A \\
+    \eqterm Γ t u A}
+  {\eqterm Γ s u A}}
+\newcommand{\ettEqTrans}{\ruleref{\ettrn{EqTrans}}{rule:ettEqTrans}}
+
+\newcommand{\showettEqTyRefl}{\ett
+  \infer
+  {\istype Γ A}
+  {\eqtype Γ A A}}
+\newcommand{\ettEqTyRefl}{\ruleref{\ettrn{EqTyRefl}}{rule:ettEqTyRefl}}
+
+\newcommand{\showettEqTySym}{\ett
+  \infer
+  {\eqtype Γ A B}
+  {\eqtype Γ B A}}
+\newcommand{\ettEqTySym}{\ruleref{\ettrn{EqTySym}}{rule:ettEqTySym}}
+
+\newcommand{\showettEqTyTrans}{\ett
+  \infer
+  {\eqtype Γ A B \\
+   \eqtype Γ B C}
+  {\eqtype Γ A C}}
+\newcommand{\ettEqTyTrans}{\ruleref{\ettrn{EqTyTrans}}{rule:ettEqTyTrans}}
+
+\newcommand{\showettEqTyConv}{\ett
+  \infer
+  {\eqterm Γ s t A \\
+    \eqtype Γ A B}
+  {\eqterm Γ s t B}}
+\newcommand{\ettEqTyConv}{\ruleref{\ettrn{EqTyConv}}{rule:ettEqTyConv}}
+
+\newcommand{\showettEqReflection}{\ett
+  \infer
+  {\isterm Γ u {\eq A s t}}
+  {\eqterm Γ s t A}}
+\newcommand{\ettEqReflection}{\ruleref{\ettrn{EqReflection}}{rule:ettEqReflection}}
+
+\newcommand{\showettProdBeta}{\ett
+  \infer
+  {\isterm{\ctxext Γ x A} s B \\
+   \isterm Γ t A}
+  {\eqterm Γ {\app{(\lam x A B s)} x A B t}
+    {\subst s x t}
+    {\subst B x t}}}
+\newcommand{\ettProdBeta}{\ruleref{\ettrn{ProdBeta}}{rule:ettProdBeta}}
+
+\newcommand{\showettEqEta}{\ett
+  \infer
+  {\isterm Γ t {\eq A s  u } \\
+    \isterm Γ v {\eq A s  u }}
+  {\eqterm Γ t v {\eq A s  u }}}
+\newcommand{\ettEqEta}{\ruleref{\ettrn{EqEta}}{rule:ettEqEta}}
+
+\newcommand{\showettProdEta}{\ett
+  \infer
+  {\isterm Γ s {\Prod x A B}\\
+    \isterm Γ t {\Prod x A B}\\\\
+    \eqterm{\ctxext Γ x A}{(\app s x A B x)}
+    {(\app t x A B x)} B}
+  {\eqterm Γ s t {\Prod x A B}}}
+\newcommand{\ettProdEta}{\ruleref{\ettrn{ProdEta}}{rule:ettProdEta}}
+
+\newcommand{\showettCongEl}{\ett
+  \infer
+  {\eqterm {\Gamma} s t {\Univ}}
+  {\eqtype {\Gamma} {\El s} {\El t}}}
+\newcommand{\ettCongEl}{\ruleref{\ettrn{CongEl}}{rule:ettCongEl}}
+
+\newcommand{\showettCongProd}{\ett
+  \infer
+  {\eqtype Γ {A_1} {A_2} \\
+    \eqtype {\ctxext Γ x {A_1}} {B_1} {B_2}}
+  {\eqtype Γ {\Prod x {A_1} {B_1}} {\Prod x {A_2} {B_2}}}}
+\newcommand{\ettCongProd}{\ruleref{\ettrn{CongProd}}{rule:ettCongProd}}
+
+\newcommand{\showettCongAbs}{\ett
+  \infer
+  {\eqtype Γ A {A'} \\
+    \eqtype{\ctxext Γ x A} B {B'}\\
+    \eqterm{\ctxext Γ x A} s t B}
+  {\eqterm Γ {(\lam x A B s)}
+    {(\lam x {A'} {B'} t)}
+    {\Prod x A B}}}
+\newcommand{\ettCongAbs}{\ruleref{\ettrn{CongAbs}}{rule:ettCongAbs}}
+
+\newcommand{\showettCongApp}{\ett
+  \infer
+  {\eqtype Γ A {A'} \\
+    \eqtype{\ctxext Γ x A} B {B'}\\\\
+    \eqterm Γ s u {\Prod x A B}\\
+    \eqterm Γ t v A}
+  {\eqterm Γ {(\app s x A B t)}{(\app u x {A'} {B'} v)}{\subst B x t}}}
+\newcommand{\ettCongApp}{\ruleref{\ettrn{CongApp}}{rule:ettCongApp}}
+
+\newcommand{\showettCongEq}{\ett
+  \infer
+  {\eqtype Γ A B \\
+    \eqterm Γ s u A \\
+    \eqterm Γ t v A}
+  {\eqtype Γ {\eq A s t}
+    {\eq B u v}}}
+\newcommand{\ettCongEq}{\ruleref{\ettrn{CongEq}}{rule:ettCongEq}}
+
+\newcommand{\showettCongRefl}{\ett
+  \infer
+  {\eqtype Γ A B \\
+    \eqterm Γ s t A}
+  {\eqterm Γ {\refl A s} {\refl B t} {\eq A s s}}}
+\newcommand{\refCongRefl}{\ruleref{\rn{CongRefl}}{rule:CongRefl}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% JTT
+
+\newcommand{\showjttCtxEmpty}{\jtt
+  \infer
+  { }
+  {\isctx \ctxempty}}
+\newcommand{\jttCtxEmpty}{\ruleref{\jttrn{CtxEmpty}}{rule:jttCtxEmpty}}
+
+\newcommand{\showjttCtxExtend}{\jtt
+  \infer
+  {\istype {Γ_1} A \\
+   \ctxcst {Γ_1} Γ \\
+   \fresh x Γ}
+  {\isctx {(\ctxext Γ x A)}}}
+\newcommand{\jttCtxExtend}{\ruleref{\jttrn{CtxExtend}}{rule:jttCtxExtend}}
+
+\newcommand{\showjttTermTyConv}{\jtt
+  \infer
+  {\isterm {Γ_1} t A \\
+    \eqtype {Γ₂} A B \\
+    \ctxcst{Γ_1, Γ_2} Γ}
+  {\isterm Γ t B}}
+\newcommand{\jttTermTyConv}{\ruleref{\jttrn{TermTyConv}}{rule:jttTermTyConv}}
+
+\newcommand{\showjttTermVar}{\jtt
+  \infer
+  {\isctx Γ \\ \ctxprj Γ x A}
+  {\isterm Γ x A}}
+\newcommand{\jttTermVar}{\ruleref{\jttrn{TermVar}}{rule:jttTermVar}}
+
+\newcommand{\showjttTyUniv}{\jtt
+  \infer
+  {\isctx {\Gamma}}
+  {\istype {\Gamma} {\Univ}}}
+\newcommand{\jttTyUniv}{\ruleref{\jttrn{TyUniv}}{rule:jttTyUniv}}
+
+\newcommand{\showjttTyEl}{\jtt
+  \infer
+  {\isterm {Γ_1} s {\Univ} \\
+   \ctxcst {\Gamma_1} {\Gamma}}
+  {\istype Γ {\El s}}}
+\newcommand{\jttTyEl}{\ruleref{\jttrn{TyEl}}{rule:jttTyEl}}
+
+\newcommand{\showjttTyProd}{\jtt
+  \infer
+  {\istype {Γ_1} B \\ \absvar {Γ_1} x A Γ}
+  {\istype Γ {\Prod x A B}}}
+\newcommand{\jttTyProd}{\ruleref{\jttrn{TyProd}}{rule:jttTyProd}}
+
+\newcommand{\showjttTermAbs}{\jtt
+  \infer
+  {\isterm {{Γ_1}} t B \\ \absvar {Γ_1} x A Γ}
+  {\isterm Γ {(\lam x A B t)} {\Prod x A B}}}
+\newcommand{\jttTermAbs}{\ruleref{\jttrn{TermAbs}}{rule:jttTermAbs}}
+
+\newcommand{\showjttTermApp}{\jtt
+  \infer
+  {\isterm {Γ₁} s {\Prod x A B} \and
+    \isterm {Γ₂} t A \and
+    \ctxcst {Γ₁, Γ₂} Γ}
+  {\isterm Γ {\app s x A B t} {\subst B x t}}}
+\newcommand{\jttTermApp}{\ruleref{\jttrn{TermApp}}{rule:jttTermApp}}
+
+\newcommand{\showjttTyEq}{\jtt
+  \infer
+  {\isterm {Γ₁} s A \\
+    \isterm {Γ₂} t A \\
+    \ctxcst {Γ₁, Γ₂} Γ}
+  {\istype Γ {\eq A s t}}}
+\newcommand{\jttTyEq}{\ruleref{\jttrn{TyEq}}{rule:jttTyEq}}
+
+\newcommand{\showjttTermRefl}{\jtt
+  \infer
+  {\isterm {Γ₁} t A \\
+    \ctxcst {Γ₁} Γ}
+  {\isterm Γ {\refl A t}{\eq A t t}}}
+\newcommand{\jttTermRefl}{\ruleref{\jttrn{TermRefl}}{rule:jttTermRefl}}
+
+\newcommand{\showjttEqRefl}{\jtt
+  \infer
+  {\isterm {Γ₁} t A \\
+    \ctxcst {Γ₁} Γ}
+  {\eqterm Γ t t A}}
+\newcommand{\jttEqRefl}{\ruleref{\jttrn{EqRefl}}{rule:jttEqRefl}}
+
+\newcommand{\showjttEqSym}{\jtt
+  \infer
+  {\eqterm {Γ₁} t s A \\
+    \ctxcst {Γ₁} Γ}
+  {\eqterm Γ s t A}}
+\newcommand{\jttEqSym}{\ruleref{\jttrn{EqSym}}{rule:jttEqSym}}
+
+\newcommand{\showjttEqTrans}{\jtt
+  \infer
+  {\eqterm {Γ₁} s t A \\
+    \eqterm {Γ₂} t u A \\
+    \ctxcst {Γ₁, Γ₂} Γ}
+  {\eqterm Γ s u A}}
+\newcommand{\jttEqTrans}{\ruleref{\jttrn{EqTrans}}{rule:jttEqTrans}}
+
+\newcommand{\showjttEqTyRefl}{\jtt
+  \infer
+  {\istype {Γ₁} A \\
+    \ctxcst {Γ₁} Γ}
+  {\eqtype Γ A A}}
+\newcommand{\jttEqTyRefl}{\ruleref{\jttrn{EqTyRefl}}{rule:jttEqTyRefl}}
+
+\newcommand{\showjttEqTySym}{\jtt
+  \infer
+  {\eqtype {Γ₁} B A \\
+    \ctxcst {Γ₁} Γ}
+  {\eqtype Γ A B}}
+\newcommand{\jttEqTySym}{\ruleref{\jttrn{EqTySym}}{rule:jttEqTySym}}
+
+\newcommand{\showjttEqTyTrans}{\jtt
+  \infer
+  {\eqtype {Γ₁} A B \\
+    \eqtype {Γ₂} B C \\
+    \ctxcst {Γ₁, Γ₂} Γ}
+  {\eqtype Γ A C}}
+\newcommand{\jttEqTyTrans}{\ruleref{\jttrn{EqTyTrans}}{rule:jttEqTyTrans}}
+
+\newcommand{\showjttEqTyConv}{\jtt
+  \infer
+  {\eqterm {Γ₁} s t A \\
+    \eqtype {Γ₂} A B \\
+    \ctxcst {Γ₁, Γ₂} Γ}
+  {\eqterm Γ s t B}}
+\newcommand{\jttEqTyConv}{\ruleref{\jttrn{EqTyConv}}{rule:jttEqTyConv}}
+
+\newcommand{\showjttEqReflection}{\jtt
+  \infer
+  {\isterm {Γ₁} u {\eq A s t} \\
+   \ctxcst {Γ₁} Γ}
+  {\eqterm Γ s t A}}
+\newcommand{\jttEqReflection}{\ruleref{\jttrn{EqReflection}}{rule:jttEqReflection}}
+
+\newcommand{\showjttProdBeta}{\jtt
+  \infer
+  {\isterm {Γ₁} s B \\
+    \isterm {Γ₂} t A \\
+    \absvar {Γ_1} x A {Γ₁'} \\
+    \ctxcst {Γ₁', Γ₂} Γ}
+  {\eqterm Γ {\app{(\lam x A B s)} x A B t}
+    {\subst s x t}
+    {\subst B x t}}}
+\newcommand{\jttProdBeta}{\ruleref{\jttrn{ProdBeta}}{rule:jttProdBeta}}
+
+\newcommand{\showjttEqEta}{\jtt
+  \infer
+  {\isterm {Γ₁} t {\eq A s  u } \\
+    \isterm {Γ₂} v {\eq A s  u } \\
+    \ctxcst {Γ₁, Γ₂} Γ}
+  {\eqterm Γ t v {\eq A s  u }}}
+\newcommand{\jttEqEta}{\ruleref{\jttrn{EqEta}}{rule:jttEqEta}}
+
+\newcommand{\showjttProdEta}{\jtt
+  \infer
+  {\isterm {Γ₁} s {\Prod x A B}\\
+    \isterm {Γ₂} t {\Prod x A B}\\\\
+    \eqterm{Γ₃}{(\app s x A B x)}{(\app t x A B x)} B \\\\
+    \absvar{Γ₃} x A {Γ₃'} \\
+    \ctxcst {Γ₁, Γ₂, Γ₃'} Γ
+  }
+  {\eqterm Γ s t {\Prod x A B}}}
+\newcommand{\jttProdEta}{\ruleref{\jttrn{ProdEta}}{rule:jttProdEta}}
+
+\newcommand{\showjttCongEl}{\jtt
+  \infer
+  {\eqterm {\Gamma_1} s t {\Univ} \\
+   \ctxcst {\Gamma_1} {\Gamma}}
+  {\eqtype {\Gamma} {\El s} {\El t}}}
+\newcommand{\jttCongEl}{\ruleref{\jttrn{CongEl}}{rule:jttCongEl}}
+
+\newcommand{\showjttCongProd}{\jtt
+  \infer
+  {\eqtype {Γ₁} {A_1} {A_2} \\
+    \eqtype {Γ₂} {B_1} {B_2} \\
+    \absvar{Γ₂} x {A₁} {Γ₂'} \\
+    \ctxcst{Γ₁, Γ₂'} Γ
+  }
+  {\eqtype Γ {\Prod x {A_1} {B_1}} {\Prod x {A_2} {B_2}}}}
+\newcommand{\jttCongProd}{\ruleref{\jttrn{CongProd}}{rule:jttCongProd}}
+
+\newcommand{\showjttCongAbs}{\jtt
+  \infer
+  {\eqtype {Γ₁} A {A'} \\
+    \eqtype{Γ₂} B {B'}\\
+    \eqterm{Γ₃} s t B \\\\
+    \ctxcst {Γ₂, Γ₃} Δ \\
+    \absvar Δ x A {Δ'} \\
+    \ctxcst {Γ₁, Δ'} Γ
+  }
+  {\eqterm Γ {(\lam x A B s)}
+    {(\lam x {A'} {B'} t)}
+    {\Prod x A B}}}
+\newcommand{\jttCongAbs}{\ruleref{\jttrn{CongAbs}}{rule:jttCongAbs}}
+
+\newcommand{\showjttCongApp}{\jtt
+  \infer
+  {\eqtype {Γ₁} A {A'} \\
+    \eqtype {Γ₂} B {B'}\\\\
+    \eqterm {Γ₃} s u {\Prod x A B}\\
+    \eqterm {Γ₄} t v A \\\\
+    \absvar {Γ₂} x A {Γ₂'} \\
+    \ctxcst {Γ₁, Γ₂', Γ₃, Γ₄} Γ
+  }
+  {\eqterm Γ {(\app s x A B t)}{(\app u x {A'} {B'} v)}{\subst B x t}}}
+\newcommand{\jttCongApp}{\ruleref{\jttrn{CongApp}}{rule:jttCongApp}}
+
+\newcommand{\showjttCongEq}{\jtt
+  \infer
+  {\eqtype {Γ₁} A B \\
+    \eqterm {Γ₂} s u A \\
+    \eqterm {Γ₃} t v A \\
+    \ctxcst {Γ₁, Γ₂, Γ₃} Γ
+  }
+  {\eqtype Γ {\eq A s t}
+    {\eq B u v}}}
+\newcommand{\jttCongEq}{\ruleref{\jttrn{CongEq}}{rule:jttCongEq}}
+
+\newcommand{\showjttCongRefl}{\jtt
+  \infer
+  {\eqtype {Γ₁} A B \\
+    \eqterm {Γ₂} s t A \\
+    \ctxcst {Γ₁, Γ₂} Γ
+  }
+  {\eqterm Γ {\refl A s} {\refl B t} {\eq A s s}}}
+\newcommand{\jttCongRefl}{\ruleref{\jttrn{CongRefl}}{rule:jttCongRefl}}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% ATT
+
+\newcommand{\showattCtxEmpty}{\att
+  \infer
+  { }
+  {\attisctx \ctxempty}}
+\newcommand{\attCtxEmpty}{\ruleref{\attrn{CtxEmpty}}{rule:attCtxEmpty}}
+
+\newcommand{\showattCtxExtend}{\att
+  \infer
+  {\attistype {Γ₁} {γ₁} A \\
+   \ctxcst {Γ₁} Γ \\
+   \fresh x Γ \\ \asetcst {γ₁} γ \\ \asetbnd γ Γ}
+  {\attisctx {(\attctxext Γ x γ A)}}}
+\newcommand{\attCtxExtend}{\ruleref{\attrn{CtxExtend}}{rule:attCtxExtend}}
+
+\newcommand{\showattTermTyConv}{\att
+  \infer
+  {\attisterm {Γ₁} τ t A \\
+    \atteqtype {Γ₂} ε α A β B \\
+    \ctxcst{Γ₁, Γ₂} Γ \\
+    \asetcst {τ₁} {γ₁} \\
+    \asetcst {τ₂} {γ₂} \\
+    \asetcst {β}  {γ₃} \\
+    \asetcst {τ₄,ε,α,β} {γ₄} \\
+    \asetcst {τ₅,ε,α} {γ₅} \\
+    \asetbnd γ Γ
+    }
+  {\attisterm Γ γ t B}}
+\newcommand{\attTermTyConv}{\ruleref{\attrn{TermTyConv}}{rule:attTermTyConv}}
+
+\newcommand{\showattTermTyConvAlt}{\att
+  \infer
+  {\attisterm {Γ₁} τ t A \\
+    \atteqtype {Γ₂} ε α A β B \\
+    \ctxcst{Γ₁, Γ₂} Γ \\
+    \asetcst {τ₁} {γ₁} \\
+    \asetcst {τ₂} {γ₂} \\
+    \asetcst {β}  {γ₃} \\
+    \asetcst {τ₂,τ₅,ε,α,β} {γ₄} \\
+    \asetcst {τ₅,ε,α} {γ₅} \\
+    \asetbnd γ Γ
+    }
+  {\attisterm Γ γ t B}}
+\newcommand{\attTermTyConvAlt}{\ruleref{\attrn{TermTyConvAlt}}{rule:attTermTyConvAlt}}
+
+\newcommand{\showattTermVar}{\att
+  \infer
+  {\attisctx Γ \\ \ctxprj Γ x {\annot A α} \\
+   \asetle {(α,α,α,α,\asetempty)} γ \\
+   \asetbnd γ Γ}
+  {\attisterm Γ γ x A}}
+\newcommand{\attTermVar}{\ruleref{\attrn{TermVar}}{rule:attTermVar}}
+
+\newcommand{\showNatVar}{\att
+\naturalTy {\attisterm Γ γ x A} \mathrel{:=} Γ(x)}
+
+\newcommand{\showattTyUniv}{\att
+  \infer
+  {\attisctx Γ}
+  {\attistype Γ \asetempty \Univ}}
+\newcommand{\attTyUniv}{\ruleref{\attrn{TyUniv}}{rule:attTyUniv}}
+
+\newcommand{\showattTyEl}{\att
+  \infer
+  {\attisterm {Γ₁} σ s \Univ \\
+   \ctxcst {Γ₁} Γ \\ \asetcst {σ₄} γ \\
+   \asetbnd γ Γ}
+  {\attistype Γ γ {\attEl σ s}}}
+\newcommand{\attTyEl}{\ruleref{\attrn{TyEl}}{rule:attTyEl}}
+
+\newcommand{\showattTyProd}{\att
+  \infer
+  {\attistype {Γ₁} α A \\
+   \attistype {Γ₂} β B \\
+   \attabsvar {Γ₂} x α A {Γ₂'} \\
+   \ctxcst {Γ₁, Γ₂'} Γ \\
+   \asetcst {α, \asetminus β x} γ \\
+   \asetbnd γ Γ}
+  {\attistype Γ γ {\attProd x α A β B}}}
+\newcommand{\attTyProd}{\ruleref{\attrn{TyProd}}{rule:attTyProd}}
+
+\newcommand{\showattTermAbs}{\att
+  \infer
+  {\attisterm {Γ₁} τ t B \\ \attabsvar {Γ₁} x α A Γ \\ \asetcst {τ} γ}
+  {\isterm Γ {(\lam x A B t)} {\Prod x A B}}}
+\newcommand{\attTermAbs}{\ruleref{\attrn{TermAbs}}{rule:attTermAbs}}
+
+\newcommand{\showattTermApp}{\att
+  \infer
+  {\isterm {Γ₁} s {\Prod x A B} \\
+    \isterm {Γ₂} t A \\
+    \ctxcst {Γ₁, Γ₂} Γ}
+  {\isterm Γ {\app s x A B t} {\subst B x t}}}
+\newcommand{\attTermApp}{\ruleref{\attrn{TermApp}}{rule:attTermApp}}
+
+\newcommand{\showattTyEq}{\att
+  \infer
+  {\isterm {Γ₁} s A \\
+    \isterm {Γ₂} t A \\
+    \ctxcst {Γ₁, Γ₂} Γ}
+  {\istype Γ {\eq A s t}}}
+\newcommand{\attTyEq}{\ruleref{\attrn{TyEq}}{rule:attTyEq}}
+
+\newcommand{\showattTermRefl}{\att
+  \infer
+  {\isterm {Γ₁} t A \\
+    \ctxcst {Γ₁} Γ}
+  {\isterm Γ {\refl A t}{\eq A t t}}}
+\newcommand{\attTermRefl}{\ruleref{\attrn{TermRefl}}{rule:attTermRefl}}
+
+\newcommand{\showattEqRefl}{\att
+  \infer
+  {\isterm {Γ₁} t A \\
+    \ctxcst {Γ₁} Γ}
+  {\eqterm Γ t t A}}
+\newcommand{\attEqRefl}{\ruleref{\attrn{EqRefl}}{rule:attEqRefl}}
+
+\newcommand{\showattEqSym}{\att
+  \infer
+  {\eqterm {Γ₁} t s A \\
+    \ctxcst {Γ₁} Γ}
+  {\eqterm Γ s t A}}
+\newcommand{\attEqSym}{\ruleref{\attrn{EqSym}}{rule:attEqSym}}
+
+\newcommand{\showattEqTrans}{\att
+  \infer
+  {\eqterm {Γ₁} s t A \\
+    \eqterm {Γ₂} t u A \\
+    \ctxcst {Γ₁, Γ₂} Γ}
+  {\eqterm Γ s u A}}
+\newcommand{\attEqTrans}{\ruleref{\attrn{EqTrans}}{rule:attEqTrans}}
+
+\newcommand{\showattEqTyRefl}{\att
+  \infer
+  {\istype {Γ₁} A \\
+    \ctxcst {Γ₁} Γ}
+  {\eqtype Γ A A}}
+\newcommand{\attEqTyRefl}{\ruleref{\attrn{EqTyRefl}}{rule:attEqTyRefl}}
+
+\newcommand{\showattEqTySym}{\att
+  \infer
+  {\eqtype {Γ₁} B A \\
+    \ctxcst {Γ₁} Γ}
+  {\eqtype Γ A B}}
+\newcommand{\attEqTySym}{\ruleref{\attrn{EqTySym}}{rule:attEqTySym}}
+
+\newcommand{\showattEqTyTrans}{\att
+  \infer
+  {\eqtype {Γ₁} A B \\
+    \eqtype {Γ₂} B C \\
+    \ctxcst {Γ₁, Γ₂} Γ}
+  {\eqtype Γ A C}}
+\newcommand{\attEqTyTrans}{\ruleref{\attrn{EqTyTrans}}{rule:attEqTyTrans}}
+
+\newcommand{\showattEqTyConv}{\att
+  \infer
+  {\eqterm {Γ₁} s t A \\
+    \eqtype {Γ₂} A B \\
+    \ctxcst {Γ₁, Γ₂} Γ}
+  {\eqterm Γ s t B}}
+\newcommand{\attEqTyConv}{\ruleref{\attrn{EqTyConv}}{rule:attEqTyConv}}
+
+\newcommand{\showattEqReflection}{\att
+  \infer
+  {\isterm {Γ₁} u {\eq A s t} \\
+   \ctxcst {Γ₁} Γ}
+  {\eqterm Γ s t A}}
+\newcommand{\attEqReflection}{\ruleref{\attrn{EqReflection}}{rule:attEqReflection}}
+
+\newcommand{\showattProdBeta}{\att
+  \infer
+  {\isterm {Γ₁} s B \\
+    \isterm {Γ₂} t A \\
+    \absvar {Γ_1} x A {Γ₁'} \\
+    \ctxcst {Γ₁', Γ₂} Γ}
+  {\eqterm Γ {\app{(\lam x A B s)} x A B t}
+    {\subst s x t}
+    {\subst B x t}}}
+\newcommand{\attProdBeta}{\ruleref{\attrn{ProdBeta}}{rule:attProdBeta}}
+
+\newcommand{\showattEqEta}{\att
+  \infer
+  {\isterm {Γ₁} t {\eq A s  u } \\
+    \isterm {Γ₂} v {\eq A s  u } \\
+    \ctxcst {Γ₁, Γ₂} Γ}
+  {\eqterm Γ t v {\eq A s  u }}}
+\newcommand{\attEqEta}{\ruleref{\attrn{EqEta}}{rule:attEqEta}}
+
+\newcommand{\showattProdEta}{\att
+  \infer
+  {\isterm {Γ₁} s {\Prod x A B}\\
+    \isterm {Γ₂} t {\Prod x A B}\\\\
+    \eqterm{Γ₃}{(\app s x A B x)}{(\app t x A B x)} B \\\\
+    \absvar{Γ₃} x A {Γ₃'} \\
+    \ctxcst {Γ₁, Γ₂, Γ₃'} Γ
+  }
+  {\eqterm Γ s t {\Prod x A B}}}
+\newcommand{\attProdEta}{\ruleref{\attrn{ProdEta}}{rule:attProdEta}}
+
+\newcommand{\showattCongEl}{\att
+  \infer
+  {\eqterm {\Gamma_1} s t {\Univ} \\
+   \ctxcst {\Gamma_1} {\Gamma}}
+  {\eqtype {\Gamma} {\El s} {\El t}}}
+\newcommand{\attCongEl}{\ruleref{\attrn{CongEl}}{rule:attCongEl}}
+
+\newcommand{\showattCongProd}{\att
+  \infer
+  {\eqtype {Γ₁} {A_1} {A_2} \\
+    \eqtype {Γ₂} {B_1} {B_2} \\
+    \absvar{Γ₂} x {A₁} {Γ₂'} \\
+    \ctxcst{Γ₁, Γ₂'} Γ
+  }
+  {\eqtype Γ {\Prod x {A_1} {B_1}} {\Prod x {A_2} {B_2}}}}
+\newcommand{\attCongProd}{\ruleref{\attrn{CongProd}}{rule:attCongProd}}
+
+\newcommand{\showattCongAbs}{\att
+  \infer
+  {\eqtype {Γ₁} A {A'} \\
+    \eqtype{Γ₂} B {B'}\\
+    \eqterm{Γ₃} s t B \\\\
+    \ctxcst {Γ₂, Γ₃} Δ \\
+    \absvar Δ x A {Δ'} \\
+    \ctxcst {Γ₁, Δ'} Γ
+  }
+  {\eqterm Γ {(\lam x A B s)}
+    {(\lam x {A'} {B'} t)}
+    {\Prod x A B}}}
+\newcommand{\attCongAbs}{\ruleref{\attrn{CongAbs}}{rule:attCongAbs}}
+
+\newcommand{\showattCongApp}{\att
+  \infer
+  {\eqtype {Γ₁} A {A'} \\
+    \eqtype {Γ₂} B {B'}\\\\
+    \eqterm {Γ₃} s u {\Prod x A B}\\
+    \eqterm {Γ₄} t v A \\\\
+    \absvar {Γ₂} x A {Γ₂'} \\
+    \ctxcst {Γ₁, Γ₂', Γ₃, Γ₄} Γ
+  }
+  {\eqterm Γ {(\app s x A B t)}{(\app u x {A'} {B'} v)}{\subst B x t}}}
+\newcommand{\attCongApp}{\ruleref{\attrn{CongApp}}{rule:attCongApp}}
+
+\newcommand{\showattCongEq}{\att
+  \infer
+  {\eqtype {Γ₁} A B \\
+    \eqterm {Γ₂} s u A \\
+    \eqterm {Γ₃} t v A \\
+    \ctxcst {Γ₁, Γ₂, Γ₃} Γ
+  }
+  {\eqtype Γ {\eq A s t}
+    {\eq B u v}}}
+\newcommand{\attCongEq}{\ruleref{\attrn{CongEq}}{rule:attCongEq}}
+
+\newcommand{\showattCongRefl}{\att
+  \infer
+  {\eqtype {Γ₁} A B \\
+    \eqterm {Γ₂} s t A \\
+    \ctxcst {Γ₁, Γ₂} Γ
+  }
+  {\eqterm Γ {\refl A s} {\refl B t} {\eq A s s}}}
+\newcommand{\attCongRefl}{\ruleref{\attrn{CongRefl}}{rule:attCongRefl}}
+
