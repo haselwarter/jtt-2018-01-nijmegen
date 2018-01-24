@@ -6,6 +6,8 @@
 % \usepackage[colorlinks,linkcolor={blue!50!black},citecolor={green!50!black},urlcolor={red!80!black},
 % xetex]{hyperref}
 
+\usepackage{cancel}
+
 \newtheorem{proposition}{Proposition}[section]
 \newtheorem{thm}{Theorem}[section]
 \newtheorem{lem}[thm]{Lemma}
@@ -14,11 +16,23 @@
 % \setbeamertemplate{enumerate items}[default]
 \useinnertheme{circles}
 
+
+\newcommand{\backupbegin}{
+   \newcounter{framenumberappendix}
+   \setcounter{framenumberappendix}{\value{framenumber}}
+}
+\newcommand{\backupend}{
+   \addtocounter{framenumberappendix}{-\value{framenumber}}
+   \addtocounter{framenumber}{\value{framenumberappendix}}
+}
+
+
 % General macros
 \input{macros.tex}
 
 % Definitions of all rules
 \input{rules.tex}
+
 
 % \usepackage{rotating}
 
@@ -48,7 +62,7 @@
 
 \mode<presentation>
 \usecolortheme{rose}
-\usefonttheme{serif}
+% \usefonttheme{serif}
 \setbeamertemplate{navigation symbols}{}
 
 % Frame number
@@ -92,6 +106,7 @@
   Answer: Yes!
   % \pause
   Also for ETT.
+  % mention: ETT = Π, Eq-reflection, 1 universe
 
   % proof argument: easy induction on the derivation
   % TODO: What do we mean by *algorithmic*? In the abstract, there is mention
@@ -123,33 +138,95 @@
   % So we can be more flexible than just deleting stuff in restriction.
   % TODO: But we won't (be more flexible), will we?
 
-  \only<1>  {$$\showettTermAppHole$$}
-  \only<2>  {$$\showjttTermAppHole$$}
-  \only<3-4>{$$\showjttTermAppLt$$}
-  \only<5>  {$$\showjttTermApp$$}
+  \only<1>  {\ett
+    % $$\showettTermAppHole$$
+    $$ \infer
+    {
+      \istype Γ A \and
+      \istype {\ctxext Γ x A} B
+    }
+    {\istype Γ {\Prod x A B}}
+    $$
+  }
+  \only<2>  {\ett
+    $$
+    % \showjttTermAppHole
+    \infer
+    {
+      \istype {{\color{red} Δ}} A \and
+      \istype {{\color{red} {\ctxext Ξ x A}}} B
+    }
+    {\istype {{\color{red} Γ}} {\Prod x A B}}
+    $$
+  }
+  \only<3-6>{\jtt
+    $$
+    % \showjttTermAppLt
+    \infer
+    {
+      \istype {{\color{red} Δ}} A \and
+      \istype {{\color{red} {\ctxext Ξ x A}}} B \and
+      {\color{blue} \ctxle Δ Γ \and \ctxle Ξ Γ}
+    }
+    {\istype {{\color{red} Γ}} {\Prod x A B}}
+    $$}
 
 
   % the occurrences of ≤ could be bidirectional
 
+  \medskip
   \visible<4->{
     New side-conditions: $\ctxle Δ Γ$
     \begin{itemize}
     \item at least: $\forall Γ,\; \ctxle \ctxempty Γ \text{ and }\jtt \ctxle Γ ({\ctxext Γ x A })$
       % structural
+      % refl, trans
     \item at most: if $\ctxle Δ Γ $ and $\jtt \isjdg Δ {\mathcal J}$, then
       $\jtt \isjdg Γ  {\mathcal J}$
       % semantic
-      % Notice that this can be quite generous: x:A,y:B ≤ x:⊥,y:C
     \end{itemize}
-    % refl, trans
   }
+  \medskip
+  % Notice that this can be quite generous:
+  \visible<5->{
+    Example: $\jtt \ctxle {\ctxext{\ctxentry x A} y B}  {\ctxext {\ctxentry x ⊥} y C}$
+  }
+
+  \visible<6->{
+    Non-example: $\jtt {\ctxext{\ctxentry x A} y B} \mathrel{\cancel{\,≤\,}}  {\ctxext {\ctxentry x A} z B}$
+  }
+
 
 \end{frame}
 
 
 % skip this or only briefly
 \begin{frame}{Axioms for compatible contexts}
+  \only<1>  {\jtt
+    $$
+    % \showjttTermApp
+    \infer
+    {
+      \istype {{\color{red} Δ}} A \and
+      \istype {{\color{red} {\ctxext Ξ x A}}} B \and
+      {\color{blue} \ctxcst {Δ, Ξ} Γ}
+    }
+    {\istype {{\color{red} Γ}} {\Prod x A B}}
+    $$}
+  \only<2->  {\jtt
+    $$
+    % \showjttTermApp
+    \infer
+    {
+      \istype {{\color{red} Δ}} A \and
+      \istype {{\color{green} {Ξ'}}} B \and
+      {{\color{green} \absvar {Ξ'} x A Ξ}} \and
+      {\color{blue} \ctxcst {Δ, Ξ} Γ}
+    }
+    {\istype {{\color{red} Γ}} {\Prod x A B}}
+    $$}
 
+  \smallskip
   The relation ${\ctxcst {Γ₁, …, Γ_n} Γ}$ generalises sub-contexts.
   \begin{itemize}
   \item  it must satisfy:
@@ -158,11 +235,15 @@
     (\all{j ≤ n} Γ_j ≤ Γ) &\implies \some{Γ' ≤ Γ} \ctxcst{Γ₁, …, Γ_n}{Γ'}
   \end{align*}
 
-  \item could be a function     % as one would like for implementing this relation
-  \item has to be compatible with context restriction % (cf. assumptions)
-  \item partial                 % can fail
+  \item could be a (partial) function     % as one would like for implementing this relation
   \end{itemize}
   %
+  \smallskip
+
+  \visible<2->{\jtt
+    The relation ${\color{green} \absvar {Ξ'} x A Ξ}$ generalises $Ξ' = \ctxext Ξ x A$.
+  }
+
 \end{frame}
 
 
@@ -172,7 +253,7 @@
     If $\jtt \isjdg Γ {\mathcal J}$ then $\ett \isjdg Γ {\mathcal J$}.
   \end{theorem}
   \begin{theorem}[Completeness]
-    If $\ett\isjdg Γ {\mathcal J}$ then there is $Γ' ≤ Γ$ such that $\jtt\isjdg{Γ'}{\mathcal J}$.
+    If $\ett\isjdg Γ {\mathcal J}$ then there is $\ctxle Δ Γ$ such that $\jtt\isjdg Δ {\mathcal J}$.
     % If $\ett\isctx Γ$ then $\jtt\isctx Γ$.
   \end{theorem}
 
@@ -185,8 +266,8 @@
 
   If
   \begin{ett}
-    $\isterm {\ctxext Γ x A} s B$ derivable and $x \notin {\text{\emph{{FreeVar}}}}(s,B)$, then
-    $\isterm Γ s B$ ?
+    $\isterm {\ctxext Γ x A} s B$ derivable and $x \notin {\text{\emph{{FreeVar}}}}(s,B)$, \\
+    then $\isterm Γ s B$ ?
   \end{ett}
 
   \medskip
@@ -194,6 +275,7 @@
   \pause
   Answer: ITT: yes, ETT: no.
   \medskip
+  \pause
 
   For example:
   %
@@ -222,17 +304,48 @@
 
 \end{frame}
 
-\begin{frame}{Annotated type theory}
-  % TODO: annotations on types of variables in contexts
+\begin{frame}{Idea: annotated type theory}
+  % So far we only added new side conditions; this time we will change the
+  % syntax and the judgement forms by adding annotations
+
+  \begin{att}
+    \begin{align*}
+      \intertext{Assumption sets}
+      &α, β, γ \bnf {}&& \emptyset \bnfor \{x\} \bnfor α \cup β \bnfor α \backslash \{x\}
+      % \\
+      \intertext{Contexts}
+      &Γ, Δ \bnf   {}&& \ctxempty \bnfor {} \attctxext Γ x α A
+      % \\
+      \intertext{Types}
+      &A, B \bnf {}&& \Univ \bnfor {\attProd x α A β B} \bnfor \eq {A^α} {s^σ} {t^τ} \bnfor …
+      %
+      \intertext{Judgements}
+      &&&\attistype Γ α A \bnfor \attisterm Γ γ s A \bnfor …
+    \end{align*}
+  \end{att}
+
+  NB: context compatibility has to be compatible with context restriction % (cf. assumptions)
+
+  % really aSets may be n-tuples
+
 \end{frame}
 
 \begin{frame}{Annotated TT: Product formation}
 
   % Annotate
-  $ α, β, γ $ are sets of free names
   % \vskip{1}
 
-  $$\showattTyProd$$
+  $$\att
+  % \showattTyProd
+  \infer
+  {\attistype {Γ₁} α A \\
+    \attistype {Γ₂} β B \\
+    \attabsvar {Γ₂} x α A {Γ₂'} \\
+    \ctxcst {Γ₁, Γ₂'} Γ \\
+    \asetcst {α, \asetminus β x} γ \\
+    \asetbnd γ Γ}
+  {\attistype Γ γ {\attProd x α A β B}}
+  $$
 
 \end{frame}
 
@@ -255,14 +368,16 @@
 \begin{frame}{Relating ETT and annotated TT}
 
   \begin{proposition}[Conservativity of ATT]
-    If $\att \attisjdg Γ γ {\mathcal J}$ then $\ett \isjdg Γ {\underline {\mathcal J}}$.
+    If $\att \attisjdg Γ γ {\mathcal J}$ then there exists $\underline {\mathcal J}$, a stripping of $\mathcal J$, such that $\ett \isjdg Γ {\underline {\mathcal J}}$.
   \end{proposition}
   % we have to strip the judgement of its annotations
   \begin{proposition}[Completeness of ATT]
-    If $\ett\isjdg Γ {\mathcal J}$ then there is $Γ' ≤ Γ$, $γ$,
-    s.t. $\att\attisjdg{Γ'}γ{\mathcal J}$.
+    If $\ett\isjdg Γ {\mathcal J}$ then there are $Γ' ≤ Γ$, $γ$, and $\mathcal J'$,
+    such that $\mathcal{J} = \mathcal{\underline J'}$ and $\att\attisjdg{Γ'}γ{\mathcal J'}$.
     % If $\ett\isctx Γ$ then $\att\isctx Γ$.
   \end{proposition}
+
+  % NB: the ctxle should be for a stripping of Γ'
 
 \end{frame}
 
@@ -287,5 +402,24 @@
   \end{mathpar}
 
 \end{frame}
+
+\appendix
+\backupbegin
+
+\begin{frame}{Abstraction relation}
+  We assume given a relation $\absvar Δ x A {Δ'}$ which satisfies the
+following conditions:
+%
+\begin{align}
+  \latag{abs-elim}
+  \absvar Δ x A {Δ'} &\implies
+    \some {\ctxle Φ {Δ'}} \ctxle Δ {(\ctxext Φ x A)} \\
+  \latag{abs-intro}
+  \ctxle Δ {(\ctxext Γ x A)} &\implies \some{\ctxle {Δ'} Γ} \absvar Δ x A {Δ'}
+\end{align}
+
+\end{frame}
+
+\backupend
 
 \end{document}
