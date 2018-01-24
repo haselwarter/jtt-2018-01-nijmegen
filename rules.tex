@@ -59,6 +59,16 @@
   {\isterm Γ {\app s x A B t}{\subst B x t}}}
 \newcommand{\ettTermApp}{\ruleref{\ettrn{TermApp}}{rule:ettTermApp}}
 
+\newcommand{\showettTermAppHole}{\ett
+  \infer
+  {\isterm Γ s {\Prod x A B} \and
+    \isterm Γ t A \and
+    \phantom{Δ ≤ Γ} \and \phantom{Ξ ≤ Γ}
+    }
+  {\isterm Γ {\app s x A B t}{\subst B x t}}}
+\newcommand{\ettTermAppHole}{\ruleref{\ettrn{TermAppHole}}{rule:ettTermAppHole}}
+
+
 \newcommand{\showettTyEq}{\ett
   \infer
   {\isterm Γ s A \\
@@ -253,11 +263,27 @@
   {\isterm Γ {(\lam x A B t)} {\Prod x A B}}}
 \newcommand{\jttTermAbs}{\ruleref{\jttrn{TermAbs}}{rule:jttTermAbs}}
 
+\newcommand{\showjttTermAppHole}{\jtt
+  \infer
+  {\isterm {{\color{red}{Δ}}} s {\Prod x A B} \and
+    \isterm {{\color{red}{Ξ}}} t A \and
+    \phantom{Δ ≤ Γ} \and \phantom{Ξ ≤ Γ}}
+  {\isterm {{\color{red}{Γ}}} {\app s x A B t} {\subst B x t}}}
+\newcommand{\jttTermAppHole}{\ruleref{\jttrn{TermAppHole}}{rule:jttTermAppHole}}
+
+\newcommand{\showjttTermAppLt}{\jtt
+  \infer
+  {\isterm {{\color{red}{Δ}}} s {\Prod x A B} \and
+    \isterm {{\color{red}{Ξ}}} t A \and
+    {\color{blue} Δ ≤ Γ} \and {\color{blue} Ξ ≤ Γ} }
+  {\isterm {{\color{red}{Γ}}} {\app s x A B t} {\subst B x t}}}
+\newcommand{\jttTermAppLt}{\ruleref{\jttrn{TermAppLt}}{rule:jttTermAppLt}}
+
 \newcommand{\showjttTermApp}{\jtt
   \infer
-  {\isterm {Γ₁} s {\Prod x A B} \and
-    \isterm {Γ₂} t A \and
-    \ctxcst {Γ₁, Γ₂} Γ}
+  {\isterm {{\color{red} Δ}} s {\Prod x A B} \and
+    \isterm {{\color{red} Ξ}} t A \and
+    {\color{blue} {\ctxcst {Δ, Ξ} Γ}}}
   {\isterm Γ {\app s x A B t} {\subst B x t}}}
 \newcommand{\jttTermApp}{\ruleref{\jttrn{TermApp}}{rule:jttTermApp}}
 

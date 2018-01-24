@@ -1,16 +1,19 @@
-Given a judgement J, an inversion principle lets us recover possible premises
-J₁...Jₙ, so that J can be derived from J₁...Jₙ. Inversion principles are
-usually stated in terms of rules or derivations.
+Algorithmic inversion principles for Extensional Type Theory
 
-The fundamental datatype of proof assistants however is not a derivation but a
-typed term together with its context, i.e. a judgement. In calculi with
-decidable type checking this is equivalent to giving a derivation, but in the
-context of extensional type theory, we can not reconstruct derivations from
-judgements. The inversion principles we are after must therefore work on
-judgements.
+In type theory an inversion principle says that a derivable judgement has a
+derivation of a specific shape depending on the judgement only (other
+derivations may exist). There are many uses of inversion principles. For
+example, in a proof assistant we usually need an algorithmic version of
+inversion principles that allows us to deconstruct derived judgements.
 
-We present a reformulation of extensional type theory geared towards
-implementation, where the judgements are enriched with enough information to
-reconstruct sufficient parts of the derivation to invert judgements.
+Unfortunately, in extensional type theory only weak forms of inversion
+principles hold, and they are normally presented in a declarative way, not
+algorithmically. Judgements simply do not carry enough information for stronger
+inversion principles to hold. We present an enrichment of extensional type
+theory in which judgements carry additional information about the derivation.
+The enriched type theory has algorithmic inversion principles, and is sound and
+complete with respect to standard extensional type theory in a precise sense.
+We may thus safely implement inversion in a proof assistant for extensional
+type theory.
 
-This development is wip and jww Andrej Bauer.
+This is work in progress, done jointly with Andrej Bauer.

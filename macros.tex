@@ -11,7 +11,7 @@
 % Magic that switches between ETT and JTT
 \newcommand{\entails}{\JTTORETTNOTSET} % there shouldn't be a default
 \newcommand{\letett}{\def\entails{\vdash}\def\isctx{\ettisctx}}
-\newcommand{\letjtt}{\def\entails{\vdash_{\!J}}\def\isctx{\jttisctx}}
+\newcommand{\letjtt}{\def\entails{\vdash^{\!\!'}}\def\isctx{\jttisctx}}
 \newcommand{\letatt}{
   \def\entails{\vdash} % _{\!A}
   % \def\isjdg\attisjdg
@@ -91,7 +91,7 @@
 \newcommand{\attisctx}[1]{#1 \entails \mathsf{ctx}}
 \newcommand{\attisjdg}[3]{#1 \entails^{\!#2} #3}
 \newcommand{\attistype}[3]{#1 \entails^{\!#2} #3 \kern .5em \mathsf{type}}
-\newcommand{\atteqtype}[6]{#1 \entails^{\!#2} (#3,#4) \equiv (#5,#6)}
+\newcommand{\atteqtype}[6]{#1 \entails^{\!#2} {#4^{#3}} \equiv {#6^{#5}}}
 \newcommand{\attisterm}[4]{#1 \entails^{\!#2} #3 : #4}
 \newcommand{\atteqterm}[7]{#1 \entails^{\!#2} (#3, #4) ~ \equiv ~ (#5, #6) : #7} % equal terms
 
@@ -109,8 +109,8 @@
 
 % assumption sets
 \newcommand{\asetempty}{\emptyset}
-\newcommand{\asetle}[2]{#1 ≼ #2}
-\newcommand{\asetcst}[2]{\asetle {\{#1\}} #2}
+\newcommand{\asetle}[2]{#1 \subseteq #2}
+\newcommand{\asetcst}[2]{\bigcup \asetle {\{#1\}} #2}
 \newcommand{\asetbnd}[2]{\asetle {#1} {\ctxdom {#2}}}
 \newcommand{\asetminus}[2]{#1 \backslash \{#2\}}
 \newcommand{\annot}[2]{\bare{#1}^{#2}}

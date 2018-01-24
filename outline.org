@@ -1,0 +1,11 @@
+* Title
+* Inversion principles -- general / basic
+* Inversion principles -- declarative/algorithmic, strong/weak
+* LCF style proof assistant -> forward chaining
+* Context joins
+* Strengthening lost
+** why do we care? (example?)
+   If I just want to recombine judgements to a bigger context anyhow, why not
+   have the bigger context in the sub-judgements?
+* Strengthening recovered
+* Relating ETT, JTT, ATT

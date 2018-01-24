@@ -1,13 +1,18 @@
-\documentclass[14pt]{beamer}
+\documentclass[13pt]{beamer}
 \usepackage{amsmath,amssymb,amsthm,mathtools,unicode-math}
 
 \usepackage{mathpartir}
-% \usepackage{xcolor}
+\usepackage{xcolor}
 % \usepackage[colorlinks,linkcolor={blue!50!black},citecolor={green!50!black},urlcolor={red!80!black},
 % xetex]{hyperref}
 
+\newtheorem{proposition}{Proposition}[section]
 \newtheorem{thm}{Theorem}[section]
 \newtheorem{lem}[thm]{Lemma}
+
+% \setbeamertemplate{itemize items}[default]
+% \setbeamertemplate{enumerate items}[default]
+\useinnertheme{circles}
 
 % General macros
 \input{macros.tex}
@@ -20,26 +25,20 @@
 
 % % \usepackage{color}
 % % \usepackage{booktabs}
-% \usepackage{mathpartir}
 
 
-\title{Inversion rules in extensional type theory}
+\title{Algorithmic inversion principles in extensional type theory}
 \author{
-  Andrej Bauer %\inst{1}
+  Andrej Bauer % \inst{1}
   \and
-  \emph{Philipp G. Haselwarter} %\inst{1},
+  \emph{Philipp Haselwarter} % \inst{1}% ,
 }
 
-% \institute{University of Ljubljana, Slovenia
-% \and
-% \'Ecole Normale Supérieure Lyon, France
-% \and
-% Harvey Mudd College, USA
-% }
+\institute{% University of Ljubljana, Slovenia
+}
 
 \date{\small
-  EUTypes Nijmegen 2018\\
-  % University of Novi Sad\\
+  EUTypes Nijmegen 2018
   % May 2016
 }
 
@@ -65,8 +64,12 @@
 
 \begin{frame}{Inversion principles}
 
-  For a judgement \quad $\ett {\infer{}{\isterm Γ {(\lam x A B t)} C}} $ \quad
-  does there exist a derivation of a particular shape?
+  Input: \quad $\ett {\infer{}{\isterm Γ {(\lam x A B s)} C}} $
+  \bigskip
+
+  \pause
+  %
+  Is there a derivation of a particular shape?
   %
   \begin{mathpar}\ett{
       \infer
@@ -87,16 +90,97 @@
 
   \pause
   Answer: Yes!
-  \pause
+  % \pause
   Also for ETT.
 
-  % TODO: sketch proof argument
+  % proof argument: easy induction on the derivation
+  % TODO: What do we mean by *algorithmic*? In the abstract, there is mention
+  % of /weak/ inversion principles; explain this here using λ-intro (body does
+  % not mention x)? In particular, can we produce the judgements that appear in
+  % the sub-derivations just from the final judgement? It seems so. Otherwise
+  % that could be a difference?
+
+\end{frame}
+
+
+\begin{frame}{Sub-contexts and compatible contexts}
+
+  % When I showed you the original theory, I simplified my life a bit.
+
+  % As Andrej pointed out in his talk on Monday, in an LCF style proof
+  % assistant we want to have the possibility to use forward reasoning. For
+  % example, we want to re-use the same theorem in different contexts. We won't
+  % force the user to write down the weakenings for us.
+
+  % !!!!! TODO: This is a lie. We don't have to write down the weakenings
+  % anyhow, just strengthenings / exchange. In Coq, you *do* have to write
+  % those explicitly.
+
+  For forward reasoning we need to \emph{combine} judgements:
+  % \pause
+  % Idea: We introduce a new type theory and will show it to be equivalent to ETT
+
+  % So we can be more flexible than just deleting stuff in restriction.
+  % TODO: But we won't (be more flexible), will we?
+
+  \only<1>  {$$\showettTermAppHole$$}
+  \only<2>  {$$\showjttTermAppHole$$}
+  \only<3-4>{$$\showjttTermAppLt$$}
+  \only<5>  {$$\showjttTermApp$$}
+
+
+  % the occurrences of ≤ could be bidirectional
+
+  \visible<4->{
+    New side-conditions: $\ctxle Δ Γ$
+    \begin{itemize}
+    \item at least: $\forall Γ,\; \ctxle \ctxempty Γ \text{ and }\jtt \ctxle Γ ({\ctxext Γ x A })$
+      % structural
+    \item at most: if $\ctxle Δ Γ $ and $\jtt \isjdg Δ {\mathcal J}$, then
+      $\jtt \isjdg Γ  {\mathcal J}$
+      % semantic
+      % Notice that this can be quite generous: x:A,y:B ≤ x:⊥,y:C
+    \end{itemize}
+    % refl, trans
+  }
+
+\end{frame}
+
+
+% skip this or only briefly
+\begin{frame}{Axioms for compatible contexts}
+
+  The relation ${\ctxcst {Γ₁, …, Γ_n} Γ}$ generalises sub-contexts.
+  \begin{itemize}
+  \item  it must satisfy:
+  \begin{align*}
+    \ctxcst{Γ₁, …, Γ_n} Γ &\implies \all{j ≤ n} Γ_j ≤ Γ \\
+    (\all{j ≤ n} Γ_j ≤ Γ) &\implies \some{Γ' ≤ Γ} \ctxcst{Γ₁, …, Γ_n}{Γ'}
+  \end{align*}
+
+  \item could be a function     % as one would like for implementing this relation
+  \item has to be compatible with context restriction % (cf. assumptions)
+  \item partial                 % can fail
+  \end{itemize}
+  %
+\end{frame}
+
+
+\begin{frame}{Relating the new theory to ETT}
+
+  \begin{theorem}[Conservativity]
+    If $\jtt \isjdg Γ {\mathcal J}$ then $\ett \isjdg Γ {\mathcal J$}.
+  \end{theorem}
+  \begin{theorem}[Completeness]
+    If $\ett\isjdg Γ {\mathcal J}$ then there is $Γ' ≤ Γ$ such that $\jtt\isjdg{Γ'}{\mathcal J}$.
+    % If $\ett\isctx Γ$ then $\jtt\isctx Γ$.
+  \end{theorem}
 
 \end{frame}
 
 \begin{frame}{Strengthening}
   % want "good" inversion principles
-  % TODO: find example where strengthening after inversion is necessary.
+  % TODO!!!: find example where strengthening after inversion is necessary.
   % eg. auto works for propositional fragment
 
   If
@@ -108,13 +192,16 @@
   \medskip
 
   \pause
-  Answer: ITT: yes, ETT: no. Example:
+  Answer: ITT: yes, ETT: no.
+  \medskip
 
+  For example:
+  %
   \begin{ett} $$
     \isterm {
       \begin{array}{l l l}
         P & : & \SimProd A U\\
-        {x\ y} & : & A \\
+        {x, y} & : & A \\
         z & : & {P\, x} \\
         h & : & {\eq A x y}
       \end{array}}
@@ -135,44 +222,70 @@
 
 \end{frame}
 
-\begin{frame}{Recovering strengthening}
-  annotate judgements. annotate subterms.
-
-  just collection, conversion adds stuff.
+\begin{frame}{Annotated type theory}
+  % TODO: annotations on types of variables in contexts
 \end{frame}
 
-\begin{frame}{Consistent contexts}
+\begin{frame}{Annotated TT: Product formation}
 
-  For forward reasoning we need to \emph{combine} judgements.
-  \pause
+  % Annotate
+  $ α, β, γ $ are sets of free names
+  % \vskip{1}
 
-  $$\showjttTermApp$$
+  $$\showattTyProd$$
 
-  \begin{itemize}
-  \item at least structural: $\ctxle \ctxempty Γ$ and $\jtt \ctxle Γ ({\ctxext Γ x A })$
-  \item at most semantic: if $\ctxle Δ Γ $ and $\jtt \isjdg Δ {\mathcal J}$ then
-    $\jtt \isjdg Γ  {\mathcal J}$
-  \end{itemize}
-  % refl, trans
-
-  The relation ${\ctxcst {Γ₁, Γ₂} Γ}$ generalises subcontexts.
-
-  \begin{itemize}
-  \item could be functional
-  \item has to be compatible with context restriction (cf. assumptions)
-\end{itemize}
 \end{frame}
 
+\begin{frame}{Annotated TT: Conversion}
 
-% skip this or only briefly
-\begin{frame}{Axioms for consistent- and sub-contexts}
-  \begin{align*}
-    \ctxcst{Γ₁, …, Γ_n} Γ &\implies \all{j ≤ n} Γ_j ≤ Γ \\
-    (\all{j ≤ n} Γ_j ≤ Γ) &\implies \some{Γ' ≤ Γ} \ctxcst{Γ₁, …, Γ_n}{Γ'}
-  \end{align*}
+  % most rules just do collection, conversion adds (potentially)
+  % proof-irrelevant hypothesis.
+
+  $$\showattTermTyConv$$
+
+  % NB: ($α$-) equality ignores annotations
+
+  % Once we have annotations we could just say that to strengthen we
+  % delete the part of the context that's not mentioned.
+  % --> so what?
+
 \end{frame}
 
 
+\begin{frame}{Relating ETT and annotated TT}
 
+  \begin{proposition}[Conservativity of ATT]
+    If $\att \attisjdg Γ γ {\mathcal J}$ then $\ett \isjdg Γ {\underline {\mathcal J}}$.
+  \end{proposition}
+  % we have to strip the judgement of its annotations
+  \begin{proposition}[Completeness of ATT]
+    If $\ett\isjdg Γ {\mathcal J}$ then there is $Γ' ≤ Γ$, $γ$,
+    s.t. $\att\attisjdg{Γ'}γ{\mathcal J}$.
+    % If $\ett\isctx Γ$ then $\att\isctx Γ$.
+  \end{proposition}
+
+\end{frame}
+
+\begin{frame}{Inversion}
+
+  % TODO: change to ATT
+  \begin{mathpar}\att{
+      \infer
+      {
+        {\infer
+          {\infer
+            {\mathcal D_1}
+            {\isterm {\ctxext Γ x A} s B}}
+          {\isterm Γ {(\lam x A B s)} {\Prod x A B}}}
+        \and
+        {\infer
+          {\mathcal D_2}
+          {\eqtype Γ {\Prod x A B} C}}
+      }
+      {\isterm Γ {(\lam x A B s)} C}
+    }
+  \end{mathpar}
+
+\end{frame}
 
 \end{document}
