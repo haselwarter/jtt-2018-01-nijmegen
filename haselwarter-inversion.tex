@@ -41,15 +41,14 @@
 % % \usepackage{booktabs}
 
 
-\title{Algorithmic inversion principles in extensional type theory}
+\title{Algorithmic Inversion Principles in Extensional Type Theory}
 \author{
   Andrej Bauer % \inst{1}
   \and
-  \emph{Philipp Haselwarter} % \inst{1}% ,
+  \emph{Philipp G. Haselwarter} % \inst{1}% ,
 }
 
-\institute{% University of Ljubljana, Slovenia
-}
+\institute{University of Ljubljana, Slovenia}
 
 \date{\small
   EUTypes Nijmegen 2018
@@ -65,7 +64,7 @@
 % \usefonttheme{serif}
 \setbeamertemplate{navigation symbols}{}
 
-% Frame number
+% Frame number only, no navigation
 \setbeamertemplate{footline}[frame number]{}
 
 \begin{document}
@@ -78,12 +77,13 @@
 
 \begin{frame}{Inversion principles}
 
-  Input: \quad $\ett {\infer{}{\isterm Γ {(\lam x A B s)} C}} $
-  \bigskip
+  Input: a derivable judgement
+  $$\ett {\infer{}{\isterm Γ {(\lam x A B s)} C}} $$
+  % \bigskip
 
   \pause
   %
-  Is there a derivation of a particular shape?
+  Question: Is there a derivation of a particular shape?
   %
   \begin{mathpar}\ett{
       \infer
@@ -104,9 +104,12 @@
 
   \pause
   Answer: Yes!
-  % \pause
   Also for ETT.
-  % mention: ETT = Π, Eq-reflection, 1 universe
+  % ETT = Eq-reflection
+
+  % Can be done thanks to the presence of the annotation of the type of the
+  % codomain B in our lambda-term.
+
 
   % proof argument: easy induction on the derivation
   % TODO: What do we mean by *algorithmic*? In the abstract, there is mention
@@ -235,7 +238,7 @@
     (\all{j ≤ n} Γ_j ≤ Γ) &\implies \some{Γ' ≤ Γ} \ctxcst{Γ₁, …, Γ_n}{Γ'}
   \end{align*}
 
-  \item could be a (partial) function     % as one would like for implementing this relation
+  \item can compute $Γ$ from $Γ₁,…,Γₙ$     % as one would like for implementing this relation
   \end{itemize}
   %
   \smallskip
@@ -333,16 +336,16 @@
 \begin{frame}{Annotated TT: Product formation}
 
   % Annotate
-  % \vskip{1}
 
   $$\att
-  % \showattTyProd
+  %
+  \mprset{vskip=1ex}
   \infer
-  {\attistype {Γ₁} α A \\
-    \attistype {Γ₂} β B \\
-    \attabsvar {Γ₂} x α A {Γ₂'} \\
-    \ctxcst {Γ₁, Γ₂'} Γ \\
-    \asetcst {α, \asetminus β x} γ \\
+  {\attistype {Δ} α A \and
+    \attistype Ξ β B \and
+    \attabsvar Ξ x α A {Ξ'} \and
+    \ctxcst {Δ, Ξ'} Γ \\
+    {α \cup (\asetminus β x)} \subseteq γ \and
     \asetbnd γ Γ}
   {\attistype Γ γ {\attProd x α A β B}}
   $$
@@ -351,10 +354,36 @@
 
 \begin{frame}{Annotated TT: Conversion}
 
-  % most rules just do collection, conversion adds (potentially)
-  % proof-irrelevant hypothesis.
+  \alt<2>
+  {$$
+    %
+    \att
+    \infer
+    {\attisterm Ξ ξ s A \and
+      \atteqtype Δ δ {} A {} B \and
+      \ctxcst{Ξ, Δ} Γ \\
+      {ξ \cup δ} \subseteq γ \\
+      \asetbnd γ Γ
+    }
+    {\attisterm Γ γ s B}
+    $$}
+  % Which assumptions should be in γ?
+  {$$
+    %
+    \att
+    \infer
+    {\attisterm Ξ ξ s A \and
+      \atteqtype Δ δ {} A {} B \and
+      \ctxcst{Ξ, Δ} Γ \\
+      \phantom{{ξ \cup δ} \subseteq γ} \\
+      \phantom{\asetbnd γ Γ}
+    }
+    {\attisterm Γ γ s B}
+    $$}
 
-  $$\showattTermTyConv$$
+  % Π formation and most rules just do collection of aSets from premises.
+  % Conversion can add proof-irrelevant hypothesis that come from equality reflection!
+
 
   % NB: ($α$-) equality ignores annotations
 
