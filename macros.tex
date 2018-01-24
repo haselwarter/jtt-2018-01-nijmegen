@@ -11,7 +11,7 @@
 % Magic that switches between ETT and JTT
 \newcommand{\entails}{\JTTORETTNOTSET} % there shouldn't be a default
 \newcommand{\letett}{\def\entails{\vdash}\def\isctx{\ettisctx}}
-\newcommand{\letjtt}{\def\entails{\vdash^{\!\!'}}\def\isctx{\jttisctx}}
+\newcommand{\letjtt}{\def\entails{\vdash^{\!\!\!\!f}}\def\isctx{\jttisctx}}
 \newcommand{\letatt}{
   \def\entails{\vdash} % _{\!A}
   % \def\isjdg\attisjdg

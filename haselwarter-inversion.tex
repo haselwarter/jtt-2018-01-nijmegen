@@ -1,4 +1,4 @@
-\documentclass[13pt]{beamer}
+\documentclass[13pt,usenames,dvipsnames]{beamer}
 \usepackage{amsmath,amssymb,amsthm,mathtools,unicode-math}
 
 \usepackage{mathpartir}
@@ -83,7 +83,7 @@
 
   \pause
   %
-  Question: Is there a derivation of a particular shape?
+  Question: Is there a derivation starting with a particular shape?
   %
   \begin{mathpar}\ett{
       \infer
@@ -104,7 +104,7 @@
 
   \pause
   Answer: Yes!
-  Also for ETT.
+  Also for Extensional Type Theory (ETT).
   % ETT = Eq-reflection
 
   % Can be done thanks to the presence of the annotation of the type of the
@@ -134,12 +134,15 @@
   % anyhow, just strengthenings / exchange. In Coq, you *do* have to write
   % those explicitly.
 
-  For forward reasoning we need to \emph{combine} judgements:
-  % \pause
-  % Idea: We introduce a new type theory and will show it to be equivalent to ETT
+  For forward reasoning we need to \emph{combine} judgements.
+  % For instance, we can first compute the right premise, then the left one,
+  % then combine them.
+  % But we have to /guess/ the contexts.
 
-  % So we can be more flexible than just deleting stuff in restriction.
-  % TODO: But we won't (be more flexible), will we?
+  % Idea: Modify the rules of type theory so that contexts of the premises are
+  % always completely independent. Then show that these rules are equivalent to
+  % the usual ones.
+
 
   \only<1>  {\ett
     % $$\showettTermAppHole$$
@@ -163,8 +166,9 @@
     $$
   }
   \only<3-6>{\jtt
-    $$
-    % \showjttTermAppLt
+    \textbf{Contexts in premises must be independent!}
+    % primed turnstile means forward reasoning
+    $$%
     \infer
     {
       \istype {{\color{red} Δ}} A \and
@@ -175,7 +179,6 @@
     $$}
 
 
-  % the occurrences of ≤ could be bidirectional
 
   \medskip
   \visible<4->{
@@ -205,9 +208,10 @@
 
 % skip this or only briefly
 \begin{frame}{Axioms for compatible contexts}
+
+  % the occurrences of ≤ could be bidirectional
   \only<1>  {\jtt
-    $$
-    % \showjttTermApp
+    $$ %
     \infer
     {
       \istype {{\color{red} Δ}} A \and
@@ -217,13 +221,12 @@
     {\istype {{\color{red} Γ}} {\Prod x A B}}
     $$}
   \only<2->  {\jtt
-    $$
-    % \showjttTermApp
+    $$ %
     \infer
     {
       \istype {{\color{red} Δ}} A \and
-      \istype {{\color{green} {Ξ'}}} B \and
-      {{\color{green} \absvar {Ξ'} x A Ξ}} \and
+      \istype {{\color{green!50!black} {Ξ'}}} B \and
+      {{\color{green!50!black} \absvar {Ξ'} x A Ξ}} \and
       {\color{blue} \ctxcst {Δ, Ξ} Γ}
     }
     {\istype {{\color{red} Γ}} {\Prod x A B}}
@@ -233,18 +236,21 @@
   The relation ${\ctxcst {Γ₁, …, Γ_n} Γ}$ generalises sub-contexts.
   \begin{itemize}
   \item  it must satisfy:
-  \begin{align*}
-    \ctxcst{Γ₁, …, Γ_n} Γ &\implies \all{j ≤ n} Γ_j ≤ Γ \\
-    (\all{j ≤ n} Γ_j ≤ Γ) &\implies \some{Γ' ≤ Γ} \ctxcst{Γ₁, …, Γ_n}{Γ'}
-  \end{align*}
+    \begin{align*}
+      \ctxcst{Γ₁, …, Γ_n} Γ &\implies \all{j ≤ n} Γ_j ≤ Γ \\
+      (\all{j ≤ n} Γ_j ≤ Γ) &\implies \some{Γ' ≤ Γ} \ctxcst{Γ₁, …, Γ_n}{Γ'}
+    \end{align*}
 
-  \item can compute $Γ$ from $Γ₁,…,Γₙ$     % as one would like for implementing this relation
+  \item we can choose to compute $Γ$ from $Γ₁,…,Γₙ$
+    % as one would like for implementing this relation
   \end{itemize}
   %
   \smallskip
 
   \visible<2->{\jtt
-    The relation ${\color{green} \absvar {Ξ'} x A Ξ}$ generalises $Ξ' = \ctxext Ξ x A$.
+    The relation ${\color{green!50!black} \absvar {Ξ'} x A Ξ}$ generalises $Ξ' = \ctxext Ξ x A$.
+
+    Don't worry about this.
   }
 
 \end{frame}
@@ -252,13 +258,13 @@
 
 \begin{frame}{Relating the new theory to ETT}
 
-  \begin{theorem}[Conservativity]
+  \begin{proposition}[Conservativity]
     If $\jtt \isjdg Γ {\mathcal J}$ then $\ett \isjdg Γ {\mathcal J$}.
-  \end{theorem}
-  \begin{theorem}[Completeness]
+  \end{proposition}
+  \begin{proposition}[Completeness]
     If $\ett\isjdg Γ {\mathcal J}$ then there is $\ctxle Δ Γ$ such that $\jtt\isjdg Δ {\mathcal J}$.
     % If $\ett\isctx Γ$ then $\jtt\isctx Γ$.
-  \end{theorem}
+  \end{proposition}
 
 \end{frame}
 
@@ -280,30 +286,48 @@
   \medskip
   \pause
 
-  For example:
+  Example:
   %
-  \begin{ett} $$
-    \isterm {
-      \begin{array}{l l l}
-        P & : & \SimProd A U\\
-        {x, y} & : & A \\
-        z & : & {P\, x} \\
-        h & : & {\eq A x y}
-      \end{array}}
-    z {P\, y}
+  \begin{ett} $$%
+    \inferrule*
+    {\isterm {\ctxext {\ctxentry x A} p {A = B}} x A \and
+      {\inferrule*
+        {\isterm {\ctxext {\ctxentry x A} p {A = B}} p {A = B}}
+        {\eqtype {\ctxext {\ctxentry x A} p {A = B}} A B}
+      }
+    }
+    {
+      \isterm {
+        \ctxext {\ctxentry x A} p {A = B}
+        % \begin{array}{l l l}
+        %   x & : & A \\
+        %   p & : & A = B \\
+        % \end{array}
+      }
+      x B
+    }
     $$
   \end{ett}
 
+\end{frame}
 
-  Ex.: normalisation under $λ$: Prove $λx. (λy.y) x ≡ λx.x$ by congr. \& $β$.
+\begin{frame}{Strengthening and inversion}
+
+  Example:
+  Deconstruct an implication
+  $$\jtt \istype Γ {\SimProd A B}$$
+
+  Really, this is
+  $$\jtt \istype Γ {\Prod \_ A B}$$
+  \bigskip
+  % eg. for proof search
+  % TODO: copy inversion of TyProd here
+
+  % "weak" inversion
+  Inversion only yields $\jtt \istype {\ctxext Γ x A} B$, but $B$ is independent of $x$!
   %
-  Congr. = deconstruct jdg.
-  %
-  w/o strengthening, subterms % (really rather: their judgements)
-  get ``poisoned'': bound variables proliferate, prevent re-assembly of the
-  normalised subterms.
-  % TODO: find a construction that actually relies on strengthening & fails w/o it
-  % try to remove strengthening in Andromeda, see what fails!
+  % w/o strengthening, judgements we get for subterms get ``poisoned'': bound
+  % variables proliferate, prevent re-assembly of the normalised subterms.
 
 \end{frame}
 
@@ -314,28 +338,38 @@
   \begin{att}
     \begin{align*}
       \intertext{Assumption sets}
-      &α, β, γ \bnf {}&& \emptyset \bnfor \{x\} \bnfor α \cup β \bnfor α \backslash \{x\}
+      &α, β, γ \bnf {}&& \{x₁, …, xₙ\}
+      %
+      \intertext{Judgements}
+      &&&\attistype Γ α A \bnfor \attisterm Γ γ s A \bnfor …
       % \\
       \intertext{Contexts}
       &Γ, Δ \bnf   {}&& \ctxempty \bnfor {} \attctxext Γ x α A
       % \\
       \intertext{Types}
-      &A, B \bnf {}&& \Univ \bnfor {\attProd x α A β B} \bnfor \eq {A^α} {s^σ} {t^τ} \bnfor …
-      %
-      \intertext{Judgements}
-      &&&\attistype Γ α A \bnfor \attisterm Γ γ s A \bnfor …
+      &A, B \bnf {}&& {\attProd x α A β B} \bnfor \eq {A^α} {s^σ} {t^τ} \bnfor …
     \end{align*}
   \end{att}
-
-  NB: context compatibility has to be compatible with context restriction % (cf. assumptions)
 
   % really aSets may be n-tuples
 
 \end{frame}
 
-\begin{frame}{Annotated TT: Product formation}
+\begin{frame}{Recovering strengthening}
 
-  % Annotate
+  \begin{proposition}
+    Given $\att \attisterm Γ γ s A$, there exists a context $\ctxres Γ γ$, such
+    that $γ = \ctxdom{\ctxres Γ γ}$, $\ctxle {\ctxres Γ γ} Γ$, and
+    $\att \attisterm {\ctxres Γ γ} γ s A$.
+  \end{proposition}
+  % Of course, to prove this we have to prove it for all judgement forms.
+
+  % NB: context compatibility has to be compatible with context restriction % (cf. assumptions)
+
+
+\end{frame}
+
+\begin{frame}{Annotated TT: Product formation}
 
   $$\att
   %
@@ -349,6 +383,11 @@
     \asetbnd γ Γ}
   {\attistype Γ γ {\attProd x α A β B}}
   $$
+
+  % Notice that we could take γ to be equal to the union of α and β\{x}, but
+  % this is the more general formulation.
+
+  % In practice, Andromeda will collect these assumptions for you.
 
 \end{frame}
 
@@ -395,42 +434,49 @@
 
 
 \begin{frame}{Relating ETT and annotated TT}
-
+  Definition. Given an annotated context $Γ$ (resp. judgement $\mathcal J$), its stripping
+  $\underline Γ$ (resp. $\underline {\mathcal J}$) is given by deleting all annotations.
+  % Rem:  syntactically, this is an ETT judgement
+  \pause
   \begin{proposition}[Conservativity of ATT]
-    If $\att \attisjdg Γ γ {\mathcal J}$ then there exists $\underline {\mathcal J}$, a stripping of $\mathcal J$, such that $\ett \isjdg Γ {\underline {\mathcal J}}$.
+    If $\att \attisjdg Γ γ {\mathcal J}$ then there exists $\underline {\mathcal J}$, such that $\ett \isjdg Γ {\underline {\mathcal J}}$.
   \end{proposition}
-  % we have to strip the judgement of its annotations
+
+  \pause
   \begin{proposition}[Completeness of ATT]
-    If $\ett\isjdg Γ {\mathcal J}$ then there are $Γ' ≤ Γ$, $γ$, and $\mathcal J'$,
-    such that $\mathcal{J} = \mathcal{\underline J'}$ and $\att\attisjdg{Γ'}γ{\mathcal J'}$.
+    If $\ett\isjdg Γ {\mathcal J}$ then there are $Γ'$, $γ$, and $\mathcal J'$,
+    such that $\underline{Γ}' ≤ Γ$,
+    $\mathcal{\underline J'} = \mathcal{J}$ and $\att\attisjdg{Γ'}γ{\mathcal J'}$.
     % If $\ett\isctx Γ$ then $\att\isctx Γ$.
   \end{proposition}
 
-  % NB: the ctxle should be for a stripping of Γ'
+  \pause
+  \medskip
+  \center{Thank you}
 
 \end{frame}
 
-\begin{frame}{Inversion}
+% \begin{frame}{Inversion}
 
-  % TODO: change to ATT
-  \begin{mathpar}\att{
-      \infer
-      {
-        {\infer
-          {\infer
-            {\mathcal D_1}
-            {\isterm {\ctxext Γ x A} s B}}
-          {\isterm Γ {(\lam x A B s)} {\Prod x A B}}}
-        \and
-        {\infer
-          {\mathcal D_2}
-          {\eqtype Γ {\Prod x A B} C}}
-      }
-      {\isterm Γ {(\lam x A B s)} C}
-    }
-  \end{mathpar}
+%   % TODO: change to ATT
+%   \begin{mathpar}\att{
+%       \infer
+%       {
+%         {\infer
+%           {\infer
+%             {\mathcal D_1}
+%             {\isterm {\ctxext Γ x A} s B}}
+%           {\isterm Γ {(\lam x A B s)} {\Prod x A B}}}
+%         \and
+%         {\infer
+%           {\mathcal D_2}
+%           {\eqtype Γ {\Prod x A B} C}}
+%       }
+%       {\isterm Γ {(\lam x A B s)} C}
+%     }
+%   \end{mathpar}
 
-\end{frame}
+% \end{frame}
 
 \appendix
 \backupbegin
